@@ -22,5 +22,5 @@ if (supabase) {
 }
 
 app.get("/", (req, res) => {
-  console.log("Hello from vercel");
+  res.send("Hello from vercel");
 });
