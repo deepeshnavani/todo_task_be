@@ -3,7 +3,7 @@ const supabase = require("../connection/connect");
 
 const getUserIdFromToken = (req) => {
   const token = req.headers.authorization?.split(" ")[1];
-  if (!token) throw new Error("No token");
+  if (!token) throw new Error("No token provided");
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   return decoded.user_id;
 };
@@ -22,8 +22,9 @@ exports.getTodos = async (req, res) => {
     if (error) throw error;
 
     res.json(todos);
-  } catch {
-    res.status(401).json({ message: "Unauthorized" });
+  } catch (err) {
+    console.error("getTodos error:", err.message);
+    res.status(401).json({ message: err.message || "Unauthorized" });
   }
 };
 
@@ -34,6 +35,10 @@ exports.addTodo = async (req, res) => {
   try {
     const user_id = getUserIdFromToken(req);
 
+    if (!task_name || !due_date) {
+      return res.status(400).json({ message: "Missing task_name or due_date" });
+    }
+
     const { data: todo, error } = await supabase
       .from("todos")
       .insert([{ user_id, task_name, due_date }])
@@ -43,8 +48,9 @@ exports.addTodo = async (req, res) => {
     if (error) throw error;
 
     res.status(201).json(todo);
-  } catch {
-    res.status(401).json({ message: "Unauthorized" });
+  } catch (err) {
+    console.error("addTodo error:", err.message);
+    res.status(401).json({ message: err.message || "Unauthorized" });
   }
 };
 
@@ -67,8 +73,11 @@ exports.updateTodo = async (req, res) => {
     if (error || !updated) throw error;
 
     res.json(updated);
-  } catch {
-    res.status(401).json({ message: "Unauthorized or not found" });
+  } catch (err) {
+    console.error("updateTodo error:", err.message);
+    res
+      .status(401)
+      .json({ message: err.message || "Unauthorized or not found" });
   }
 };
 
@@ -88,7 +97,10 @@ exports.deleteTodo = async (req, res) => {
     if (error) throw error;
 
     res.json({ message: "Todo deleted" });
-  } catch {
-    res.status(401).json({ message: "Unauthorized or not found" });
+  } catch (err) {
+    console.error("deleteTodo error:", err.message);
+    res
+      .status(401)
+      .json({ message: err.message || "Unauthorized or not found" });
   }
 };
