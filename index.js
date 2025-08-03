@@ -21,6 +21,6 @@ if (supabase) {
   console.error("Supabase connection failed!");
 }
 
-app.get("/", () => {
+app.get("/", (req, res) => {
   console.log("Hello from vercel");
 });
