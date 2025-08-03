@@ -30,7 +30,7 @@ exports.getTodos = async (req, res) => {
 
 // Add a new todo
 exports.addTodo = async (req, res) => {
-  const { task_name, due_date } = req.body;
+  const { task_name, task_desc, due_date } = req.body;
 
   try {
     const user_id = getUserIdFromToken(req);
@@ -41,7 +41,7 @@ exports.addTodo = async (req, res) => {
 
     const { data: todo, error } = await supabase
       .from("todos")
-      .insert([{ user_id, task_name, due_date }])
+      .insert([{ user_id, task_name, task_desc, due_date }])
       .select()
       .single();
 
@@ -57,14 +57,14 @@ exports.addTodo = async (req, res) => {
 // Update a todo
 exports.updateTodo = async (req, res) => {
   const { todo_id } = req.params;
-  const { task_name, due_date } = req.body;
+  const { task_name, task_desc, due_date } = req.body;
 
   try {
     const user_id = getUserIdFromToken(req);
 
     const { data: updated, error } = await supabase
       .from("todos")
-      .update({ task_name, due_date })
+      .update({ task_name, task_desc, due_date })
       .eq("todo_id", todo_id)
       .eq("user_id", user_id)
       .select()
