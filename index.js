@@ -1,11 +1,22 @@
 const express = require("express");
 require("dotenv").config();
-const port = 7000 || process.env.port;
+const cors = require("cors");
 const supabase = require("./src/connection/connect");
 
+const mainRouter = require("./src/router/route");
 const app = express();
 
+app.use(cors());
+app.use(express.json());
+
+app.use("/api", mainRouter);
+
+const port = process.env.PORT || 7000;
 app.listen(port, () => {
-  console.log("Server is started!!");
+  console.log(`Server started on port ${port}`);
 });
-if (supabase) console.log("Connnection is created!!");
+if (supabase) {
+  console.log("Supabase connection created!");
+} else {
+  console.error("Supabase connection failed!");
+}
