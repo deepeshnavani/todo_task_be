@@ -8,7 +8,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://todo-task-fe.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://todo-task-fe.vercel.app",
+      "https://todo-task-fe-two.vercel.app",
+    ],
     credentials: true,
   })
 );
